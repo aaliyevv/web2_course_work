@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Shopping Application Home</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<h1>Welcome to the Shopping Application!</h1>
+<form th:action="@{/products}" method="get">
+    <button type="submit">View Products</button>
+</form>
+<form th:action="@{/orders}" method="get">
+    <button type="submit">View Orders</button>
+</form>
+</body>
+</html>
