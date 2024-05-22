@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List</title>
+    <link rel="stylesheet" href="css/students.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+</head>
+<body>
+<!--Header-->
+<div th:replace="fragments/header"></div>
+<!--Header-->
+<div class="container">
+    <div class="section-header">
+        <h1>Student List</h1>
+        <div>
+            <button id="filterBtn" class="add-btn btn-primary">Filter</button>
+            <button id="addStudentBtn" class="add-btn">Add Student</button>
+        </div>
+    </div>
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Student</h2>
+            <form id="addStudentForm" action="/students/addStudent" method="post">
+                <div>
+                    <label for="firstName">First Name:</label>
+                    <input type="text" id="firstName" name="name" required>
+                </div>
+                <div>
+                    <label for="lastName">Last Name:</label>
+                    <input type="text" id="lastName" name="surname" required>
+                </div>
+                <div>
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div>
+                    <label for="age">Age:</label>
+                    <input type="number" id="age" name="age" required>
+                </div>
+                <div>
+                    <label for="courses">Courses:</label>
+                    <select id="courses" name="courses" multiple>
+                        <option th:each="course : ${courses}" th:value="${course.id}" th:text="${course.title}"></option>
+                    </select>
+                </div>
+                <button type="submit">Add</button>
+            </form>
+        </div>
+    </div>
+    
+    <form th:action="@{/students}" method="get" id="filter-form" class="filter-form">
+        <div class="row">
+            <div class="col">
+                <label for="firstName">First Name:</label>
+                <input type="text" id="firstName" th:value="${name}" name="name" class="form-control" placeholder="First Name">
+            </div>
+            <div class="col">
+                <label for="lastName">Last Name:</label>
+                <input type="text" id="lastName" th:value="${surname}" name="surname" class="form-control" placeholder="Last Name">
+            </div>
+            <div class="col">
+                <label for="courseId">Course:</label>
+                <select style="padding: 8px;" id="courseId" name="courseId" class="form-control">
+                    <option value="">-- Select Course --</option>
+                    <option th:selected="${course.id == courseId}" th:each="course : ${courses}" th:value="${course.id}" th:text="${course.title}"></option>
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col">
+                <label for="email">Email:</label>
+                <input type="text" id="email" th:value="${email}" name="email" class="form-control" placeholder="Email">
+            </div>
+            <div class="col">
+                <label for="age">Age:</label>
+                <input type="number" id="age" th:value="${age}" name="age" class="form-control" placeholder="Age">
+            </div>
+            <div class="col" style="display: flex; align-items: end;">
+                <button type="button" onclick="resetBtn()" class="btn btn-danger">Reset</button>
+            </div>
+            <div class="col" style="display: flex; align-items: end;">
+                <button type="submit" class="btn btn-primary">Filter</button>
+            </div>
+        </div>
+    </form>
+    <select class="sorting-select" onchange="location = this.value;">
+        <option value="">Select sorting option</option>
+        <option th:selected="${sortBy == 'id' and direction == 'asc' }" th:value="@{/students(sortBy=id,direction=asc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by ID (Ascending)</option>
+        <option th:selected="${sortBy == 'id' and direction == 'desc' }" th:value="@{/students(sortBy=id,direction=desc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by ID (Descending)</option>
+        <option th:selected="${sortBy == 'name' and direction == 'asc' }" th:value="@{/students(sortBy=name,direction=asc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by First Name (Ascending)</option>
+        <option th:selected="${sortBy == 'name' and direction == 'desc' }" th:value="@{/students(sortBy=name,direction=desc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by First Name (Descending)</option>
+        <option th:selected="${sortBy == 'surname' and direction == 'asc' }" th:value="@{/students(sortBy=surname,direction=asc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Last Name (Ascending)</option>
+        <option th:selected="${sortBy == 'surname' and direction == 'desc' }" th:value="@{/students(sortBy=surname,direction=desc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Last Name (Descending)</option>
+        <option th:selected="${sortBy == 'email' and direction == 'asc' }" th:value="@{/students(sortBy=email,direction=asc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Email (Ascending)</option>
+        <option th:selected="${sortBy == 'email' and direction == 'desc' }" th:value="@{/students(sortBy=email,direction=desc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Email (Descending)</option>
+        <option th:selected="${sortBy == 'age' and direction == 'asc' }" th:value="@{/students(sortBy=age,direction=asc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Age (Ascending)</option>
+        <option th:selected="${sortBy == 'age' and direction == 'desc' }" th:value="@{/students(sortBy=age,direction=desc, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">Sort by Age (Descending)</option>
+    </select>
+    <div class="student-table" >
+        <div class="header-row">
+            <div class="cell">
+                <a th:href="@{/students(sortBy=id, direction=${sortBy == 'id' ? (direction == 'asc' ? 'desc' : 'asc') : 'asc'}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">
+                    ID
+                    <span>
+                <i th:class="${sortBy == 'id' ? (direction == 'asc' ? 'fas fa-chevron-up' : 'fas fa-chevron-down') : ''}"></i>
+            </span>
+                </a>
+            </div>
+            <div class="cell">
+                <a th:href="@{/students(sortBy=name, direction=${sortBy == 'name' ? (direction == 'asc' ? 'desc' : 'asc') : 'asc'}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">
+                    First Name
+                    <span>
+                <i th:class="${sortBy == 'name' ? (direction == 'asc' ? 'fas fa-chevron-up' : 'fas fa-chevron-down') : ''}"></i>
+            </span>
+                </a>
+            </div>
+            <div class="cell">
+                <a th:href="@{/students(sortBy=surname, direction=${sortBy == 'surname' ? (direction == 'asc' ? 'desc' : 'asc') : 'asc'}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">
+                    Last Name
+                    <span>
+                <i th:class="${sortBy == 'surname' ? (direction == 'asc' ? 'fas fa-chevron-up' : 'fas fa-chevron-down') : ''}"></i>
+            </span>
+                </a>
+            </div>
+            <div class="cell">
+                <a th:href="@{/students(sortBy=email, direction=${sortBy == 'email' ? (direction == 'asc' ? 'desc' : 'asc') : 'asc'}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">
+                    Email
+                    <span>
+                <i th:class="${sortBy == 'email' ? (direction == 'asc' ? 'fas fa-chevron-up' : 'fas fa-chevron-down') : ''}"></i>
+            </span>
+                </a>
+            </div>
+            <div class="cell">
+                <a th:href="@{/students(sortBy=age, direction=${sortBy == 'age' ? (direction == 'asc' ? 'desc' : 'asc') : 'asc'}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}">
+                    Age
+                    <span>
+                <i th:class="${sortBy == 'age' ? (direction == 'asc' ? 'fas fa-chevron-up' : 'fas fa-chevron-down') : ''}"></i>
+            </span>
+                </a>
+            </div>
+            <div class="cell">Actions</div>
+        </div>
+
+
+        <div th:each="student : ${students}" class="data-row">
+            <div class="cell" th:text="${student.id}"></div>
+            <div class="cell" th:text="${student.name}"></div>
+            <div class="cell" th:text="${student.surname}"></div>
+            <div class="cell" th:text="${student.email}"></div>
+            <div class="cell" th:text="${student.age}"></div>
+            <div class="cell">
+                <button class="button btn-primary" th:onclick="openEditModal([[${student.id}]],[[${student.name}]],[[${student.surname}]],[[${student.email}]],[[${student.age}]],[[${student.courses}]],[[${courses}]])">Update</button>
+                <button class="button btn-danger" th:onclick="openDeleteModal([[${student.id}]])">Delete</button>
+            </div>
+        </div>
+    </div>
+    <div class="student-cards">
+        <div th:each="student : ${students}" class="student-card primary">
+            <h2>Student</h2>
+            <p>ID: <span th:text="${student.id}"></span></p>
+            <p>Name: <span th:text="${student.name}"></span></p>
+            <p>Surname: <span th:text="${student.surname}"></span></p>
+            <p>Email: <span th:text="${student.email}"></span></p>
+            <p>Age: <span th:text="${student.age}"></span></p>
+            <div class="action-buttons">
+                <button class="btn-primary" th:onclick="openEditModal([[${student.id}]],[[${student.name}]],[[${student.surname}]],[[${student.email}]],[[${student.age}]],[[${student.courses}]],[[${courses}]])">Update</button>
+                <button class="btn-danger" th:onclick="openDeleteModal([[${student.id}]])">Delete</button>
+            </div>
+        </div>
+    </div>
+    <div id="editStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Edit Student</h2>
+            <form id="editStudentForm" action="/students/updateStudent" method="post">
+
+            </form>
+        </div>
+    </div>
+    <div id="deleteStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Delete Student</h2>
+            <p>Are you sure you want to delete this student?</p>
+            <form id="deleteStudentForm" action="/students/deleteStudent" method="get">
+                <input type="hidden" id="deleteStudentId" name="id">
+                <button type="submit">Delete</button>
+            </form>
+        </div>
+    </div>
+    <!-- Pagination -->
+    <div style="display:flex;justify-content: center;">
+        <ul class="pagination modal-2" th:if="${totalPages > 1}">
+            <li>
+                <a th:href="@{/students(page=0,sortBy=${sortBy},direction=${direction}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}" class="prev">&laquo;</a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 0, currentPage + 2 > totalPages - 1 ? totalPages - 1 : currentPage + 2)}">
+                <a th:href="@{/students(page=${page},sortBy=${sortBy},direction=${direction}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}" th:class="${currentPage == page ? 'active' : ''}" th:text="${page + 1}"></a>
+            </li>
+            <li>
+                <a th:href="@{/students(page=${totalPages - 1},sortBy=${sortBy},direction=${direction}, name=${name}, surname=${surname}, courseId=${courseId}, email=${email}, age=${age})}" class="next">&raquo;</a>
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+
+<script src="js/index.js"></script>
+<script src="js/header.js"></script>
+</body>
+</html>

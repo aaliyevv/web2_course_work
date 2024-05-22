@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Detail</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/course-detail.css}" rel="stylesheet" /> <!-- Add your CSS file for course detail page -->
+</head>
+<body>
+<!-- Header -->
+<div th:replace="fragments/header"></div>
+<!-- Header -->
+
+<div class="page-container">
+    <h1 th:text="'Course: ' + ${course.title}"></h1>
+    <p th:text="'Description: ' + ${course.description}"></p>
+
+    <form class="form-container" method="post" th:action="@{/courses/{courseId}/addStudent(courseId=${course.id})}">
+        <div class="form-group">
+            <label for="studentId">Student:</label>
+            <select id="studentId" name="studentId" class="form-control">
+                <option th:each="student: ${all_students}" th:value="${student.id}" th:text="${student.name + ' ' + student.surname}"></option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Add Student</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Age</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="student: ${students}">
+            <td th:text="${student.name + ' ' + student.surname}"></td>
+            <td th:text="${student.email}"></td>
+            <td th:text="${student.age}"></td>
+            <td>
+                <a th:href="@{'/courses/' + ${course.id} + '/students/' + ${student.id} + '/remove'}" class="btn btn-danger btn-sm">Remove</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</div>
+<script th:src="@{/js/header.js}"></script>
+
+</body>
+</html>

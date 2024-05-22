@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Courses</title>
+    <link th:href="@{/css/student-detail.css}" rel="stylesheet" />
+    <link th:href="@{/css/students.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+
+</head>
+<body>
+<!--Header-->
+<div th:replace="fragments/header"></div>
+<!--Header-->
+
+<div class="page-container">
+    <h2>Student Details:</h2>
+    <div class="student-detail">
+        <div>
+            <p>First Name: <span th:text="${student.name}"></span></p>
+            <p>Last Name: <span th:text="${student.surname}"></span></p>
+            <p>Email: <span th:text="${student.email}"></span></p>
+            <p>Age: <span th:text="${student.age}"></span></p>
+        </div>
+    </div>
+    <h2>Courses:</h2>
+    <ul>
+        <li style="display: flex; align-items:center;gap:10px;" th:each="course : ${student.courses}">
+            <span th:text="${course.title}"></span></span>
+            <form th:action="@{/students/{studentId}/removeCourse(studentId=${student.id})}" method="post">
+                <input type="hidden" name="courseId" th:value="${course.id}">
+                <button class="button btn-danger" type="submit">Delete</button>
+            </form>
+        </li>
+    </ul>
+
+    <h2>Add Course:</h2>
+    <form th:action="@{/students/{studentId}/addCourse(studentId=${student.id})}" method="post">
+        <select class="course-select" name="courseId">
+            <option th:each="course : ${courses}" th:value="${course.id}" th:text="${course.title}"></option>
+        </select>
+        <button class="button btn-primary" type="submit">Add Course</button>
+    </form>
+</div>
+<script th:src="@{/js/header.js}"></script>
+</body>
+</html>

@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Course List</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/pagination.css">
+    <link rel="stylesheet" href="css/header.css">
+    <link rel="stylesheet" href="css/course-list.css">
+</head>
+<body>
+<!--Header-->
+<div th:replace="fragments/header"></div>
+<!--Header-->
+<div class="container">
+    <div class="section-header">
+        <form action="">
+            <div class="search">
+                <input type="text" th:value="${search}" name="search" placeholder="Search ...">
+                <button type="submit">Search</button>
+            </div>
+
+        </form>
+        <select class="sorting-select" onchange="location = this.value;">
+            <option th:selected="${sortBy == 'title' and direction == 'asc' }" th:value="${'/courses?sortBy=title&direction=asc' + (search != null ? '&search=' + search : '')}">Sort by Title (Ascending)</option>
+            <option th:selected="${sortBy == 'title' and direction == 'desc' }" th:value="${'/courses?sortBy=title&direction=desc' + (search != null ? '&search=' + search : '')}">Sort by Title (Descending)</option>
+        </select>
+        <a th:href="@{/courses/create_course}" class="btn btn-success mb-3">Create New Course</a>
+    </div>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Title</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="course : ${courses}">
+            <td th:text="${course.title}"></td>
+            <td>
+                <a th:href="@{'/courses/edit/' + ${course.id}}" class="btn btn-info btn-sm">Edit</a>
+                <a th:href="@{'/courses/delete/' + ${course.id}}" class="btn btn-danger btn-sm">Delete</a>
+                <a th:href="@{'/courses/detail/' + ${course.id}}" class="btn btn-primary btn-sm">Detail</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div style="display:flex;justify-content: center;">
+        <ul class="pagination modal-2" th:if="${totalPages > 1}">
+            <li>
+                <a th:href="@{/courses(page=0,sortBy=${sortBy},direction=${direction}, search=${search})}" class="prev">&laquo;</a>
+            </li>
+            <li th:each="page : ${#numbers.sequence(currentPage > 2 ? currentPage - 2 : 0, currentPage + 2 > totalPages - 1 ? totalPages - 1 : currentPage + 2)}">
+                <a th:href="@{/courses(page=${page},sortBy=${sortBy},direction=${direction}, search=${search})}" th:class="${currentPage == page ? 'active' : ''}" th:text="${page + 1}"></a>
+            </li>
+            <li>
+                <a th:href="@{/courses(page=${totalPages - 1},sortBy=${sortBy},direction=${direction}, search=${search})}" class="next">&raquo;</a>
+            </li>
+        </ul>
+    </div>
+</div>
+<script src="js/index.js"></script>
+<script src="js/header.js"></script>
+
+</body>
+</html>
