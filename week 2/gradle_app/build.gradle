@@ -1,0 +1,15 @@
+plugins {
+    id 'java'
+}
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    // Add your dependencies here
+}
+
+wrapper {
+    gradleVersion = 'latest_version_here'
+}
